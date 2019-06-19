@@ -1,0 +1,15 @@
+{
+  "name": "ppek-metalsmith",
+  "version": "1.0.0",
+  "description": "PPEK with Metalsmith",
+  "main": "See Readme",
+  "dependencies": {
+    "metalsmith": "^2.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "See Readme"
+  },
+  "author": "",
+  "license": "ISC"
+}
