@@ -19,7 +19,7 @@ Metalsmith(__dirname)         // __dirname defined by node.js:
   .destination('./build')     // destination directory
   .clean(true)                // clean destination before
   .use(collections({          // group all blog posts by internally
-    posts: 'books/*.md'       // adding key 'collections':'books'
+    books: 'books/*.md'       // adding key 'collections':'books'
   }))                         // use `collections.posts` in layouts
   .use(markdown())            // transpile all md into html (in internal representation)
   .use(permalinks({           // change URLs to permalink URLs
