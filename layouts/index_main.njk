@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="A layout example with a side menu that hides on mobile, just like the Pure website.">
+        <title>PPEK</title>
+        
+        <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-" crossorigin="anonymous">
+        <!--[if lte IE 8]>
+            <link rel="stylesheet" href="css/layouts/side-menu-old-ie.css">
+        <![endif]-->
+        <!--[if gt IE 8]><!-->
+            <link rel="stylesheet" href="{{ rootRelativePath }}/css/layouts/side-menu.css">
+        <!--<![endif]-->
+        <link rel="stylesheet" type="text/css" href="{{ rootRelativePath }}/css/custom.css">
+    </head>
+    <body>
+        <div id="layout">
+            <!-- Menu toggle -->
+            <a href="#menu" id="menuLink" class="menu-link">
+                <!-- Hamburger icon -->
+                <span></span>
+            </a>
+
+            <div id="menu">
+                <div class="pure-menu">
+                    <a class="pure-menu-heading" href="#">Company</a>
+                    <ul class="pure-menu-list">
+                        <li class="pure-menu-item"><a href="{{ rootRelativePath }}/index.html" class="pure-menu-link">Főoldal</a></li>
+                        <li class="pure-menu-item"><a href="#" class="pure-menu-link">A könyvtárról</a></li>
+                        <li class="pure-menu-item"><a href="{{ rootRelativePath }}/{{ booksOutDir }}/index.html" class="pure-menu-link">Könyvek</a></li>
+                        <li class="pure-menu-item"><a href="{{ rootRelativePath }}/{{ authorsOutDir }}/index.html" class="pure-menu-link">Szerzők</a></li>
+                        {# <li class="pure-menu-item menu-item-divided pure-menu-selected">
+                            <a href="#" class="pure-menu-link">Services</a>
+                        </li> #}
+                    </ul>
+                </div>
+            </div>
+
+            <div id="main">
+                <div class="header">
+                    <h1>{{ sitename }}</h1>
+                </div>
+                        {{ link }}
+                {% block pageMain %}
+                {% endblock pageMain %}
+            </div>
+        </div>
+
+        <script src="{{ rootRelativePath }}/js/ui.js"></script>
+    </body>
+</html>

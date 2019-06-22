@@ -1,11 +1,9 @@
-<!doctype html>
-<html>
-<head>
-  <title>Főoldal</title>
-</head>
-<body>
-    {% for book in collections.books %}
-      <li>{{ book.title }}</li>
-    {% endfor %}
-</body>
-</html>
+{% extends "index_main.njk" %}
+{% block pageMain %}
+  <div class="content">
+    <h2 id="the-foundation" class="content-subhead">
+      {{ title }}
+    </h2>
+    {{ contents | safe }}
+  </div>
+{% endblock pageMain %}

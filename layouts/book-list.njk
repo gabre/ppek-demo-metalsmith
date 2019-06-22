@@ -1,0 +1,32 @@
+{% extends "index_main.njk" %}
+{% block pageMain %}
+  <div class="content">
+    <h2 id="the-foundation" class="content-subhead">
+      {{ title }}
+    </h2>
+    <div class="table-responsive">
+    <table class="pure-table">
+      <thead>
+          <tr>
+              <th>Szerző</th>
+              <th>Cím</th>
+              <th>Kiadás éve</th>
+          </tr>
+      </thead>
+      <tbody>
+        {% for book in collections.books | sort(false, false, 'authors.name') %}
+          <tr>
+            <td>
+              {% for author in book.authors %}
+                {{author.name}}{{"," if not loop.last }}
+              {% endfor %}
+            </td>
+            <td><a href="{{rootRelativePath}}/{{book.ownRelativePathFromRoot}}">{{ book.title }}</a></td>
+            <td>{{ book.pubdate }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </div>
+{% endblock pageMain %}
