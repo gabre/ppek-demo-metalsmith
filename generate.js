@@ -20,9 +20,9 @@ const booksOutDir   = "konyvek"
 const authorsOutDir = "szerzok"
 
 // --------------------------------------------------------------------------------
-// Custom renderer to append specific css to markdown
 
-const pureCssRenderer = () => {
+// Custom renderer to append specific css classes to markdown
+const pureCssMarkdownRenderer = () => {
     let renderer = new marked.Renderer({
         "smartypants": true,
         "smartLists": true,
@@ -41,39 +41,36 @@ const pureCssRenderer = () => {
 
 // --------------------------------------------------------------------------------
 
+// Add root's relative path and file's own relative path
 function addPathsToContent() {
-    return function(files, metalsmith, done){
+    return function(files, _metalsmith, done){
       setImmediate(done);
-      debug("Files:")
       Object.keys(files).forEach(function(filepath){
-        addPathsToContentForRef({f: files[filepath], fp: filepath})
-      });
-    };
-
-    function addPathsToContentForRef(reference) {
-        if (reference.fp.startsWith(contentDir)) {
-            debug("Processing " + reference.fp)
+        if (filepath.startsWith(contentDir)) {
+            debug("Processing " + filepath)
             // For contentDir/some.html, contentDir/some/dirs/some.html:
             // segments - contentDir - the file itself
             // For contentDir, contentDir/some/dirs:
             // segments - contentDir
             var segmentsToRemove = 1
-            if (reference.fp.endsWith(".html")) {
+            if (filepath.endsWith(".html")) {
                 segmentsToRemove = 2
             }
-            const segments = reference.fp.split(/[\\/]/)
+            const segments = filepath.split(/[\\/]/)
             const moveBackThisMany = segments.length - segmentsToRemove
             const rootRelativePath = "../".repeat(moveBackThisMany) + '.'
             const ownRelativePathFromRoot = segments.slice(1).join("/")
             debug("Relative path to root of content is " + rootRelativePath)
             debug("Relative path from root of content is " + ownRelativePathFromRoot)
 
-            reference.f.rootRelativePath = rootRelativePath;
-            reference.f.ownRelativePathFromRoot = ownRelativePathFromRoot
+            files[filepath].rootRelativePath = rootRelativePath;
+            files[filepath].ownRelativePathFromRoot = ownRelativePathFromRoot
         }
-    }
+      });
+    };
 }
 
+// Generic collection transformer function
 function transformCollections(transform, opts) {
     var collectionsToTransform = Object.keys(opts);
     return function(files, metalsmith, done){
@@ -90,6 +87,7 @@ function transformCollections(transform, opts) {
     };
 }
 
+// Sort a taxonomy (property with multiple values) of a collection
 function sortCollectionTaxonomies(metadata, collectionName, taxonomyName) {
     debug("Processing taxonomy: " + taxonomyName)
     metadata.collections[collectionName].forEach(function(collectionElem) {
@@ -97,7 +95,7 @@ function sortCollectionTaxonomies(metadata, collectionName, taxonomyName) {
     })
 }
 
-// Unused but left here for later usage, even if it is a bad practice
+// Create their own collections from taxonomies (properties of collections with multiple values)
 function createTaxonomyCollections(metadata, collectionName, taxonomyName) {
     debug("Processing taxonomy: " + taxonomyName)
     metadata.collections[taxonomyName] = metadata.collections[taxonomyName] || {};
@@ -110,13 +108,13 @@ function createTaxonomyCollections(metadata, collectionName, taxonomyName) {
     })
 }
 
-function createTaxonomyValuePages(taxonomyName, outDir, layout) {
+// Generate list pages for taxonomyName - taxonomyValue pairs (for a given taxonomyName)
+function createTaxonomyValuePages(taxonomyName, outputDir, layout) {
     return function(files, metalsmith, done){
         setImmediate(done)
         var metadata = metalsmith.metadata()
         Object.keys(metadata.collections[taxonomyName]).forEach(function(taxonomyValue) {
-            // md.collections[taxonomyName][taxonomyValue]
-            const path = contentDir + "/" + outDir + "/" + slug(taxonomyValue, {mode: 'rfc3986'}) + ".md";
+            const path = contentDir + "/" + outputDir + "/" + slug(taxonomyValue, {mode: 'rfc3986'}) + ".md";
             var page = {
                 layout: layout,
                 contents: '',
@@ -131,8 +129,7 @@ function createTaxonomyValuePages(taxonomyName, outDir, layout) {
     }
 }
 
-// --------------------
-
+// Remove first (parent) folder of a path
 function pathWithoutFirstFolder(file) {
     return file.split(/[\\/]/).slice(1).join("/")
 }
@@ -170,25 +167,32 @@ Metalsmith(__dirname)         // __dirname defined by node.js:
   .use(collections({
     books: contentDir + '/' + booksOutDir + '/*.md'
   }))
+  // Sort collection's taxonomies
   .use(transformCollections(sortCollectionTaxonomies, {
     books: ["authors"]
   }))
+  // Create their own collections for taxonomies
   .use(transformCollections(createTaxonomyCollections, {
     books: ["authors"]
   }))
+  // Create taxonomz value list pages
   .use(createTaxonomyValuePages("authors", authorsOutDir, "author-book-list.njk"))
+  // Convert markdown to html
   .use(markdown({
-    renderer: pureCssRenderer()
+    renderer: pureCssMarkdownRenderer()
   }))
+  // Create permalinks (some.html -> some/index.html)
   .use(permalinks({
     relative: false
   }))
+  // Add relative root path, own relative path
   .use(addPathsToContent())
+  // Use Nunjucks html-templates
   .use(layouts({
     default: 'book.njk',
     pattern: contentDir + "/**/*"
   }))
-  // Remove uneeded top-level folders: content, static
+  // Remove uneeded top-level folders: static, content
   .use(copy({
     pattern: 'static/**/*',
     transform: function (file) {
@@ -203,6 +207,7 @@ Metalsmith(__dirname)         // __dirname defined by node.js:
       },
     move: true
   }))
+  // Build, error logging
   .build(function(err) {
     if (err) throw err;
   });
