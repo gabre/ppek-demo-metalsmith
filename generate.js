@@ -5,9 +5,9 @@ var markdown    = require('metalsmith-markdown');
 var permalinks  = require('metalsmith-permalinks');
 var debuglog    = require('metalsmith-debug');
 var copy        = require('metalsmith-copy');
-var tags        = require('metalsmith-tags')
 var debug       = require('debug')('metalsmith-PPEK-MAIN');
 
+var slug        = require('slug');
 // marked will be downloaded as a dependency by metalsmith-markdown
 const marked    = require("marked");
 
@@ -41,17 +41,12 @@ const pureCssRenderer = () => {
 
 // --------------------------------------------------------------------------------
 
-function addPathsToContent(select) {
+function addPathsToContent() {
     return function(files, metalsmith, done){
       setImmediate(done);
       debug("Files:")
       Object.keys(files).forEach(function(filepath){
         addPathsToContentForRef({f: files[filepath], fp: filepath})
-      });
-      debug("Metadata:")
-      select(metalsmith).forEach(function(elem) {
-        debug(elem)
-        addPathsToContentForRef({f: elem, fp: elem.path + "/index.html"})
       });
     };
 
@@ -115,6 +110,27 @@ function createTaxonomyCollections(metadata, collectionName, taxonomyName) {
     })
 }
 
+function createTaxonomyValuePages(taxonomyName, outDir, layout) {
+    return function(files, metalsmith, done){
+        setImmediate(done)
+        var metadata = metalsmith.metadata()
+        Object.keys(metadata.collections[taxonomyName]).forEach(function(taxonomyValue) {
+            // md.collections[taxonomyName][taxonomyValue]
+            const path = contentDir + "/" + outDir + "/" + slug(taxonomyValue, {mode: 'rfc3986'}) + ".md";
+            var page = {
+                layout: layout,
+                contents: '',
+                taxonomyName: taxonomyName,
+                taxonomyValue: taxonomyValue,
+            }
+            files[path] = page
+            var taxonomyValueData = metadata.collections[taxonomyName][taxonomyValue]
+            taxonomyValueData["file"] = page
+            metadata.collections[taxonomyName][taxonomyValue] = taxonomyValueData
+        })
+    }
+}
+
 // --------------------
 
 function pathWithoutFirstFolder(file) {
@@ -128,7 +144,7 @@ Metalsmith(__dirname)         // __dirname defined by node.js:
                               // name of current working directory
   .metadata({                 // add any variable you want
                               // use them in layout-files
-    sitename: "Pázmány Péter Elekntronikus Könyvtár",
+    sitename: "Pázmány Péter Elektronikus Könyvtár",
     siteurl: "http://ppek.hu/",
     description: "Elektronikus könyvtár",
     generatorname: "Metalsmith",
@@ -150,38 +166,26 @@ Metalsmith(__dirname)         // __dirname defined by node.js:
     },
     move: true
     }))
+  // Definition of collection: books
   .use(collections({
     books: contentDir + '/' + booksOutDir + '/*.md'
   }))
   .use(transformCollections(sortCollectionTaxonomies, {
     books: ["authors"]
   }))
+  .use(transformCollections(createTaxonomyCollections, {
+    books: ["authors"]
+  }))
+  .use(createTaxonomyValuePages("authors", authorsOutDir, "author-book-list.njk"))
   .use(markdown({
     renderer: pureCssRenderer()
   }))
   .use(permalinks({
     relative: false
   }))
-  .use(addPathsToContent(function(metalsmith) {
-      return metalsmith.metadata().collections.books
-  }))
-  .use(tags({
-    handle: 'authors',
-    path: contentDir + '/' + authorsOutDir + '/:tag.html',
-    layout:'author-book-list.njk',
-    sortBy: 'title',
-    reverse: false,
-    skipMetadata: false,
-    metadataKey: "authors",
-    slug: {mode: 'rfc3986'}
-  }))
-.use(function(f, m, d) {
-    debug(m.metadata().books)
-    // debug(f)
-    d()
-})
+  .use(addPathsToContent())
   .use(layouts({
-    default: 'layout.njk',
+    default: 'book.njk',
     pattern: contentDir + "/**/*"
   }))
   // Remove uneeded top-level folders: content, static

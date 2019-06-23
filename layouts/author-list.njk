@@ -6,11 +6,10 @@
     </h2>
     <div class="table-responsive">
       <ul>
-        {% for author, authordata in authors | dictsort %} 
+        {% for author, authordata in collections.authors | dictsort %} 
           <li>
-            <a href="{{rootRelativePath}}/{{ authorsOutDir }}/{{authordata.urlSafe}}/index.html">{{author}}</a>
+            <a href="{{rootRelativePath}}/{{authordata.file.ownRelativePathFromRoot}}">{{author}}</a>
           </li>
-          {# <td><a href="{{rootRelativePath}}/{{book.ownRelativePathFromRoot}}">{{ book.title }}</a></td> #}
         {% endfor %}
       </ul>
     </div>

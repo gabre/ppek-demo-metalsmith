@@ -2,11 +2,11 @@
 {% block pageMain %}
   <div class="content">
     <h2 id="the-foundation" class="content-subhead">
-      {{ tag }} könyvei
+      {{ taxonomyValue }} könyvei
     </h2>
     <div class="table-responsive">
       <ul>
-        {% for authorbook in pagination.files %}
+        {% for authorbook in collections.authors[taxonomyValue] %}
           <li>
             <a href="{{rootRelativePath}}/{{authorbook.ownRelativePathFromRoot}}">{{ authorbook.title }}</a> ({{ authorbook.pubdate }})
           </li>
