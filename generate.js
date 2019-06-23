@@ -18,6 +18,7 @@ const contentDir    = "content"
 const booksInDir    = "books"
 const booksOutDir   = "konyvek"
 const authorsOutDir = "szerzok"
+const aboutOutDir   = "informaciok"
 
 // --------------------------------------------------------------------------------
 
@@ -148,7 +149,8 @@ Metalsmith(__dirname)         // __dirname defined by node.js:
     generatorurl: "http://metalsmith.io/",
 
     booksOutDir: booksOutDir,
-    authorsOutDir: authorsOutDir
+    authorsOutDir: authorsOutDir,
+    aboutOutDir: aboutOutDir
   })
   .source('./src')
   .destination('./build')
@@ -159,7 +161,8 @@ Metalsmith(__dirname)         // __dirname defined by node.js:
     pattern: contentDir + '/**/*',
     transform: function (file) {
         return file.replace(booksInDir, booksOutDir)
-                    .replace("authors", authorsOutDir)
+                   .replace("authors", authorsOutDir)
+                   .replace("about", aboutOutDir)
     },
     move: true
     }))
