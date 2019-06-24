@@ -36,3 +36,9 @@
         border-right-width: 1px;
     }
 }
+
+.ul-centered {
+    text-align: center;
+    list-style-type: none;
+    padding-inline-start: 0px;
+}
