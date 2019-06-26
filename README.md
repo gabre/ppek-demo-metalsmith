@@ -7,6 +7,12 @@ Building the site
 - Execute `node generate.js`
 - Open a browser and at build/index.html
 
+On Debian:
+- Having `curl` is a prerequisite
+- Use `curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -`, remove `sudo -E` if not available
+- Then, install with `sudo apt-get install -y nodejs`
+
+Tested on Debian Stretch (Docker).
 
 Licences
 ========
