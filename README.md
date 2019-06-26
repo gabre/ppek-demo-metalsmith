@@ -1,3 +1,13 @@
+Building the site
+=================
+
+- Install npm (>=3.5.2)
+- Install nodejs (ideally v8.10.0)
+- Execute `npm install`
+- Execute `node generate.js`
+- Open a browser and at build/index.html
+
+
 Licences
 ========
 
