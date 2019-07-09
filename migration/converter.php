@@ -41,7 +41,7 @@
 
         $bodyText = getElemText($bookPage, "/html/body");
         $description = get_description(to_bare_text(($bodyText)));
-        $urlTable = getLinks($bookPage);
+        $urlTable = getLinks($siteUrl, $bookPage);
 
         // -----------------------------------
         echo("Title: " . $title . "\n");
@@ -74,7 +74,7 @@
         }
     };
 
-    function getLinks($page) {
+    function getLinks($siteUrl, $page) {
         $x = (new DOMXPath($page))->query("/html/body/table[2]//tr//a");
         $ret = [];
         for ($i=0; $i < $x->length; $i++) {
