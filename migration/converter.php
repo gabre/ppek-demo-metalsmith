@@ -37,7 +37,8 @@
             $title = to_bare_text($twaArr[0]);
             $author = "Ismeretlen";
         }
-        $pubdate = "???";
+        $fullidnum = getElemText($bookPage, "/html/body/table[1]/tbody/tr/td[3]/b");
+        $idnum = trim(explode(":", $fullidnum)[1]);
 
         $bodyText = getElemText($bookPage, "/html/body");
         $description = get_description(to_bare_text(($bodyText)));
@@ -58,7 +59,7 @@
         fwrite($fp, 'title: ' . $title . "\n");
         fwrite($fp, 'authors:' . "\n");
         fwrite($fp, '  - ' . $author . "\n");
-        fwrite($fp, 'pubdate: ' . $pubdate . "\n");
+        fwrite($fp, 'ppeknum: ' . $idnum . "\n");
         fwrite($fp, 'download-urls: ' . "\n");
         foreach ($urlTable as $key => $value) {
             fwrite($fp, '  - ' . $key . ": " . $value . "\n");
