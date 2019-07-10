@@ -8,7 +8,7 @@
       <ul>
         {% for authorbook in collections.authors[taxonomyValue] %}
           <li>
-            <a href="{{rootRelativePath}}/{{authorbook.ownRelativePathFromRoot}}">{{ authorbook.title }}</a> ({{ authorbook.pubdate }})
+            <a href="{{rootRelativePath}}/{{authorbook.ownRelativePathFromRoot}}">{{ authorbook.title }}</a> ({{ authorbook.ppeknum }})
           </li>
           {# <td><a href="{{rootRelativePath}}/{{book.ownRelativePathFromRoot}}">{{ book.title }}</a></td> #}
         {% endfor %}
