@@ -109,7 +109,7 @@
         $string = remove_accents($string);
         // E.g.: Some title - with some subtitle
         // E.g.: Some title: some subtitle
-        $string = preg_replace('/[\s\.:!?„"”\(\)]/', '-', $string);
+        $string = preg_replace('/[\s\.:!?„"”\(\)\';,\[\]]/', '-', $string);
         return trim(preg_replace('/-+/', '-', $string), "-");
     }
 
