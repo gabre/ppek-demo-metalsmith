@@ -60,9 +60,9 @@
         fwrite($fp, 'authors:' . "\n");
         fwrite($fp, '  - ' . $author . "\n");
         fwrite($fp, 'ppeknum: ' . $idnum . "\n");
-        fwrite($fp, 'download-urls: ' . "\n");
+        fwrite($fp, 'downloadUrls: ' . "\n");
         foreach ($urlTable as $key => $value) {
-            fwrite($fp, '  - ' . $key . ": " . $value . "\n");
+            fwrite($fp, '  ' . $key . ": " . $value . "\n");
         }
         fwrite($fp, '---' . "\n");
         fwrite($fp, $description . "\n");

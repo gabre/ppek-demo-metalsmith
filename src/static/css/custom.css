@@ -51,6 +51,11 @@
     margin-bottom: 3%;
 }
 
+.with-a-few-padding {
+    margin-top: 1%;
+    margin-bottom: 1%;
+}
+
 .font-bigger {
     font-size: 18px;
 }
