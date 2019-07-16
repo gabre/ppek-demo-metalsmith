@@ -16,7 +16,7 @@
 
     mkdir($outdir);
 
-    $limit = 10;
+    $limit = 0;
 
     foreach ($elements as $key => $value) {
         $relpath = $value->getAttributeNode("href")->value;
@@ -102,6 +102,7 @@
         $string = trim($string);
         $string = preg_replace('/[\r\t\n]/', ' ', $string);
         $string = preg_replace('/\xc2\xa0/', ' ', $string);
+        $string = preg_replace('/\x{0085}/u', ' ', $string);
         $string = preg_replace('/\s+/', ' ', $string);
         return $string;
     }
@@ -110,7 +111,7 @@
         $string = remove_accents($string);
         // E.g.: Some title - with some subtitle
         // E.g.: Some title: some subtitle
-        $string = preg_replace('/[\s\.:!?„"”\(\)\';,\[\]]/', '-', $string);
+        $string = preg_replace('/[\s\.:!?„"”\(\)\';,\[\]–…\x{0085}]/u', '-', $string); // \u0085
         return trim(preg_replace('/-+/', '-', $string), "-");
     }
 
