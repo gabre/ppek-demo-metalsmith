@@ -90,7 +90,7 @@ function transformCollections(transform, opts) {
 
 // Sort a taxonomy (property with multiple values) of a collection
 function sortCollectionTaxonomies(metadata, collectionName, taxonomyName) {
-    debug("Processing taxonomy: " + taxonomyName)
+    debug("[SORT] Processing taxonomy: " + taxonomyName)
     metadata.collections[collectionName].forEach(function(collectionElem) {
         collectionElem[taxonomyName].sort()
     })
@@ -98,11 +98,11 @@ function sortCollectionTaxonomies(metadata, collectionName, taxonomyName) {
 
 // Create their own collections from taxonomies (properties of collections with multiple values)
 function createTaxonomyCollections(metadata, collectionName, taxonomyName) {
-    debug("Processing taxonomy: " + taxonomyName)
+    debug("[OWN-COLLECTIONS] Processing taxonomy: " + taxonomyName)
     metadata.collections[taxonomyName] = metadata.collections[taxonomyName] || {};
     metadata.collections[collectionName].forEach(function(collectionElem) {
         collectionElem[taxonomyName].forEach(function(taxonomyValue) {
-            debug("Adding " + collectionElem.title + " to " + taxonomyName + "/" + taxonomyValue)
+            debug("[OWN-COLLECTIONS] Adding " + collectionElem.title + " to " + taxonomyName + "/" + taxonomyValue)
             metadata.collections[taxonomyName][taxonomyValue] = metadata.collections[taxonomyName][taxonomyValue] || []
             metadata.collections[taxonomyName][taxonomyValue].push(collectionElem)
         })

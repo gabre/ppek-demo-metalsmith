@@ -8,7 +8,7 @@
       <ul class="ul-centered">
         {% for author, authordata in collections.authors | dictsort %} 
           <li class="with-some-padding">
-            <a class="bgchanger font-bigger" href="{{rootRelativePath}}/{{authordata.file.ownRelativePathFromRoot}}">{{author}}</a>
+            <a class="font-bigger" href="{{rootRelativePath}}/{{authordata.file.ownRelativePathFromRoot}}">{{author}}</a>
           </li>
         {% endfor %}
       </ul>

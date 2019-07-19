@@ -56,13 +56,13 @@
         $filename = urlize($title) . ".md";
         $fp = fopen($outdir . "/" . $filename, 'w');
         fwrite($fp, '---' . "\n");
-        fwrite($fp, 'title: ' . $title . "\n");
+        fwrite($fp, 'title: ' . quote($title) . "\n");
         fwrite($fp, 'authors:' . "\n");
-        fwrite($fp, '  - ' . $author . "\n");
+        fwrite($fp, '  - ' . quote($author) . "\n");
         fwrite($fp, 'ppeknum: ' . $idnum . "\n");
         fwrite($fp, 'downloadUrls: ' . "\n");
         foreach ($urlTable as $key => $value) {
-            fwrite($fp, '  ' . $key . ": " . $value . "\n");
+            fwrite($fp, '  ' . quote($key) . ": " . $value . "\n");
         }
         fwrite($fp, '---' . "\n");
         fwrite($fp, $description . "\n");
@@ -113,6 +113,10 @@
         // E.g.: Some title: some subtitle
         $string = preg_replace('/[\s\.:!?„"”\(\)\';,\[\]–…\x{0085}]/u', '-', $string); // \u0085
         return trim(preg_replace('/-+/', '-', $string), "-");
+    }
+
+    function quote($string) {
+        return "'" . preg_replace('/\'/', '\'\'', $string) . "'";
     }
 
     // This is an older WordPress implementation
