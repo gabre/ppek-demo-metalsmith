@@ -1,0 +1,17 @@
+{% extends "main-parent.njk" %}
+{% block pageMain %}
+  <div class="content">
+    <h2 id="the-foundation" class="content-subhead ul-centered">
+      {{ title }}
+    </h2>
+    <div class="table-responsive">
+      <ul class="ul-centered">
+        {% for book in collections.books | sort(false, false, 'title') %}
+          <li class="with-some-padding">
+            <a class="font-bigger" href="{{rootRelativePath}}/{{book.ownRelativePathFromRoot}}">{{ book.title }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endblock pageMain %}

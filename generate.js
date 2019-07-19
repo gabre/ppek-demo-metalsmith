@@ -18,6 +18,7 @@ const contentDir    = "content"
 const booksInDir    = "books"
 const booksOutDir   = "konyvek"
 const authorsOutDir = "szerzok"
+const titlesOutDir  = "cimek"
 const aboutOutDir   = "informaciok"
 
 // --------------------------------------------------------------------------------
@@ -150,6 +151,7 @@ Metalsmith(__dirname)         // __dirname defined by node.js:
 
     booksOutDir: booksOutDir,
     authorsOutDir: authorsOutDir,
+    titlesOutDir: titlesOutDir,
     aboutOutDir: aboutOutDir
   })
   .source('./src')
@@ -162,6 +164,7 @@ Metalsmith(__dirname)         // __dirname defined by node.js:
     transform: function (file) {
         return file.replace(booksInDir, booksOutDir)
                    .replace("authors", authorsOutDir)
+                   .replace("titles", titlesOutDir)
                    .replace("about", aboutOutDir)
     },
     move: true
@@ -178,7 +181,7 @@ Metalsmith(__dirname)         // __dirname defined by node.js:
   .use(transformCollections(createTaxonomyCollections, {
     books: ["authors"]
   }))
-  // Create taxonomz value list pages
+  // Create taxonomy value list pages
   .use(createTaxonomyValuePages("authors", authorsOutDir, "author-book-list.njk"))
   // Convert markdown to html
   .use(markdown({
