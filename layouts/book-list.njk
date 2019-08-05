@@ -13,7 +13,7 @@
           </tr>
       </thead>
       <tbody>
-        {% for book in collections.books | sort(false, false, 'authors') %}
+        {% for book in collections.books | sortAccented(false, 'authors') %}
           <tr>
             <td>
               {% for author in book.authors %}

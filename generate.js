@@ -41,6 +41,59 @@ const pureCssMarkdownRenderer = () => {
     return renderer;
 }
 
+// A "Hungarian" sort
+function sortAccented(arr, reversed, attr) {
+  let copiedArr = [...arr];
+
+  copiedArr.sort((a, b) => {
+    let x = ((attr) ? a[attr] : a);
+    let y = ((attr) ? b[attr] : b);
+    if (typeof(x) === 'string') {
+      x = x.toLowerCase();
+      y = y.toLowerCase();
+    } else {
+      x = x.sort(Intl.Collator('hu').compare).join("")
+      y = y.sort(Intl.Collator('hu').compare).join("")
+    }
+    return x.localeCompare(y, "hu") * (reversed ? -1 : 1)    
+  });
+
+  return copiedArr;
+}
+
+// A "Hungarian" dictionary sort
+function dictsortAccented(val, by) {
+  let newArray = [];
+  // deliberately include properties from the object's prototype
+  for (let k in val) { // eslint-disable-line guard-for-in, no-restricted-syntax
+    newArray.push([k, val[k]]);
+  }
+
+  let si;
+  if (by === undefined || by === 'key') {
+    si = 0;
+  } else if (by === 'value') {
+    si = 1;
+  } else {
+    throw new Error(
+      'dictsortAccented filter: You can only sort by either key or value');
+  }
+
+  newArray.sort((t1, t2) => {
+    // We assume that these are strings. If not, then...
+    var a = t1[si].toUpperCase();
+    var b = t2[si].toUpperCase();
+    return a.localeCompare(b, 'hu') // eslint-disable-line no-nested-ternary
+  });
+
+  return newArray;
+}
+
+// Nunjucks options
+const nunjucksRendererOptions = {
+  filters: { sortAccented: sortAccented, dictsortAccented: dictsortAccented }
+};
+
 // --------------------------------------------------------------------------------
 
 // Add root's relative path and file's own relative path
@@ -93,7 +146,7 @@ function transformCollections(transform, opts) {
 function sortCollectionTaxonomies(metadata, collectionName, taxonomyName) {
     debug("[SORT] Processing taxonomy: " + taxonomyName)
     metadata.collections[collectionName].forEach(function(collectionElem) {
-        collectionElem[taxonomyName].sort()
+        collectionElem[taxonomyName].sort(Intl.Collator('hu').compare)
     })
 }
 
@@ -196,7 +249,8 @@ Metalsmith(__dirname)         // __dirname defined by node.js:
   // Use Nunjucks html-templates
   .use(layouts({
     default: 'book.njk',
-    pattern: contentDir + "/**/*"
+    pattern: contentDir + "/**/*",
+    engineOptions: nunjucksRendererOptions
   }))
   // Remove uneeded top-level folders: static, content
   .use(copy({
