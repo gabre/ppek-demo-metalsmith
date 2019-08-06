@@ -41,6 +41,11 @@ const pureCssMarkdownRenderer = () => {
     return renderer;
 }
 
+// Function that deletes different characters used as quotation marks
+function deleteQuoteMarks(s) { 
+  return s.replace(new RegExp("[,\"„”']", "gm"), "")
+}
+
 // A "Hungarian" sort
 function sortAccented(arr, reversed, attr) {
   let copiedArr = [...arr];
@@ -49,8 +54,8 @@ function sortAccented(arr, reversed, attr) {
     let x = ((attr) ? a[attr] : a);
     let y = ((attr) ? b[attr] : b);
     if (typeof(x) === 'string') {
-      x = x.toLowerCase();
-      y = y.toLowerCase();
+      x = deleteQuoteMarks(x.toLowerCase());
+      y = deleteQuoteMarks(y.toLowerCase());
     } else {
       x = x.sort(Intl.Collator('hu').compare).join("")
       y = y.sort(Intl.Collator('hu').compare).join("")
@@ -81,8 +86,8 @@ function dictsortAccented(val, by) {
 
   newArray.sort((t1, t2) => {
     // We assume that these are strings. If not, then...
-    var a = t1[si].toUpperCase();
-    var b = t2[si].toUpperCase();
+    var a = deleteQuoteMarks(t1[si].toUpperCase());
+    var b = deleteQuoteMarks(t2[si].toUpperCase());
     return a.localeCompare(b, 'hu') // eslint-disable-line no-nested-ternary
   });
 
