@@ -4,7 +4,7 @@
     <div id="book-title">
     <h2 class="content-subhead">
       {% for author in authors %}
-        {{author}}{{"," if not loop.last }}{{":" if loop.last }}
+        {{author.name}}{{"," if not loop.last }}{{":" if loop.last }}
       {% endfor %}
       {{ title }}
     </h2>

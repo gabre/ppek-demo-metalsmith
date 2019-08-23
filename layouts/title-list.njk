@@ -6,7 +6,7 @@
     </h2>
     <div class="table-responsive">
       <ul class="ul-centered">
-        {% for book in collections.books | sortAccented(false, 'title') %}
+        {% for book in collections.books | sortAccented(false, 'title', 'sorting-title') %}
           <li class="with-some-padding">
             <a class="font-bigger" href="{{rootRelativePath}}/{{book.ownRelativePathFromRoot}}">{{ book.title }}</a>
           </li>

@@ -17,7 +17,7 @@
           <tr>
             <td>
               {% for author in book.authors %}
-                {{author}}{{"," if not loop.last }}
+                {{author.name}}{{"," if not loop.last }}
               {% endfor %}
             </td>
             <td><a href="{{rootRelativePath}}/{{book.ownRelativePathFromRoot}}">{{ book.title }}</a></td>

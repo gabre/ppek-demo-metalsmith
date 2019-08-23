@@ -6,7 +6,7 @@
     </h2>
     <div class="table-responsive">
       <ul class="ul-centered">
-        {% for author, authordata in collections.authors | dictsortAccented %} 
+        {% for author, authordata in collections.authors | dictsortAccented("attribute", "sortingName") %} 
           <li class="with-some-padding">
             <a class="font-bigger" href="{{rootRelativePath}}/{{authordata.file.ownRelativePathFromRoot}}">{{author}}</a>
           </li>

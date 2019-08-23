@@ -1,7 +1,8 @@
 ---
-title: Különösen jó regény
+title: Trükkös regény
 authors:
-  - name: Wagner Ödön
+  - name: V. Albert
+    sortingName: Albert
 ppeknum: 2014
 date: 2019-06-13 21:44:00
 downloadUrls:

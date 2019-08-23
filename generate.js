@@ -8,9 +8,7 @@ var copy        = require('metalsmith-copy');
 var debug       = require('debug')('metalsmith-PPEK-MAIN');
 
 var slug        = require('slug');
-// marked will be downloaded as a dependency by metalsmith-markdown
 const marked    = require("marked");
-
 
 // --------------------------------------------------------------------------------
 
@@ -47,12 +45,23 @@ function deleteQuoteMarks(s) {
 }
 
 // A "Hungarian" sort
-function sortAccented(arr, reversed, attr) {
+// It can sort by an attribute
+// It can look for another attribute that takes priority if exists
+function sortAccented(arr, reversed, sortingAttr, prioritizedSortingAttr) {
   let copiedArr = [...arr];
 
   copiedArr.sort((a, b) => {
-    let x = ((attr) ? a[attr] : a);
-    let y = ((attr) ? b[attr] : b);
+    let x = ((sortingAttr) ?
+               ((prioritizedSortingAttr && a[prioritizedSortingAttr]) ?
+                   a[prioritizedSortingAttr]
+                 : a[sortingAttr])
+             : a);
+    let y = ((sortingAttr) ?
+             ((prioritizedSortingAttr && b[prioritizedSortingAttr]) ?
+                 b[prioritizedSortingAttr]
+               : b[sortingAttr])
+           : b);
+           
     if (typeof(x) === 'string') {
       x = deleteQuoteMarks(x.toLowerCase());
       y = deleteQuoteMarks(y.toLowerCase());
@@ -66,19 +75,30 @@ function sortAccented(arr, reversed, attr) {
   return copiedArr;
 }
 
-// A "Hungarian" dictionary sort
-function dictsortAccented(val, by) {
+// A "Hungarian" dictionary sort that can sort by key, (whole) value or some attribute
+// If the attribute does not exist, it falls back to the key
+function dictsortAccented(val, by, attribute) {
   let newArray = [];
   // deliberately include properties from the object's prototype
   for (let k in val) { // eslint-disable-line guard-for-in, no-restricted-syntax
-    newArray.push([k, val[k]]);
+    let keyVal = [k, val[k]];
+    if (by === 'attribute' && attribute != undefined) {
+      let otherSortAttribute = val[k][attribute];
+      if (otherSortAttribute === undefined) {
+        otherSortAttribute = k;
+      }
+      keyVal.push(otherSortAttribute);
+    }
+    newArray.push(keyVal);
   }
 
-  let si;
+  let sortIndex;
   if (by === undefined || by === 'key') {
-    si = 0;
+    sortIndex = 0;
   } else if (by === 'value') {
-    si = 1;
+    sortIndex = 1;
+  } else if (by === 'attribute') {
+    sortIndex = 2;
   } else {
     throw new Error(
       'dictsortAccented filter: You can only sort by either key or value');
@@ -86,8 +106,8 @@ function dictsortAccented(val, by) {
 
   newArray.sort((t1, t2) => {
     // We assume that these are strings. If not, then...
-    var a = deleteQuoteMarks(t1[si].toUpperCase());
-    var b = deleteQuoteMarks(t2[si].toUpperCase());
+    var a = deleteQuoteMarks(t1[sortIndex].toUpperCase());
+    var b = deleteQuoteMarks(t2[sortIndex].toUpperCase());
     return a.localeCompare(b, 'hu') // eslint-disable-line no-nested-ternary
   });
 
@@ -133,7 +153,7 @@ function addPathsToContent() {
 // Generic collection transformer function
 function transformCollections(transform, opts) {
     var collectionsToTransform = Object.keys(opts);
-    return function(files, metalsmith, done){
+    return function(_files, metalsmith, done){
         var metadata = metalsmith.metadata();
         setImmediate(done);
         collectionsToTransform.forEach(function(collectionName) {
@@ -147,11 +167,18 @@ function transformCollections(transform, opts) {
     };
 }
 
-// Sort a taxonomy (property with multiple values) of a collection
+// Taxonomy = property of a collection element containing
+// objects that look like: { name: "taxonomyValue", sortingName: "taxonomyValueForSorting" }
+
+// Note that the TAXONOMY ITEM's structure (obj. with name, sortingName) is not isomorph to
+// the structure of the taxonomy-collections' items!!!
+
+// Sort a taxonomy of a collection
 function sortCollectionTaxonomies(metadata, collectionName, taxonomyName) {
     debug("[SORT] Processing taxonomy: " + taxonomyName)
     metadata.collections[collectionName].forEach(function(collectionElem) {
-        collectionElem[taxonomyName].sort(Intl.Collator('hu').compare)
+        collectionElem[taxonomyName] =
+            sortAccented(collectionElem[taxonomyName], false, "name", "sortingName");
     })
 }
 
@@ -160,9 +187,16 @@ function createTaxonomyCollections(metadata, collectionName, taxonomyName) {
     debug("[OWN-COLLECTIONS] Processing taxonomy: " + taxonomyName)
     metadata.collections[taxonomyName] = metadata.collections[taxonomyName] || {};
     metadata.collections[collectionName].forEach(function(collectionElem) {
-        collectionElem[taxonomyName].forEach(function(taxonomyValue) {
-            debug("[OWN-COLLECTIONS] Adding " + collectionElem.title + " to " + taxonomyName + "/" + taxonomyValue)
+        collectionElem[taxonomyName].forEach(function(taxonomyValueObj) {
+            debug("[OWN-COLLECTIONS] Adding " + collectionElem.title + " to " + taxonomyName + "/" + taxonomyValueObj)
+            let taxonomyValue = taxonomyValueObj["name"]
+            let sortingName = taxonomyValueObj["sortingName"]
+            // if (typeof(taxonomyValue) != 'string' && Object.keys(taxonomyValue).length == 1) {
+            //   value = Object.keys(taxonomyValue)[0]
+            //   sortingName = taxonomyValue[value]
+            // }
             metadata.collections[taxonomyName][taxonomyValue] = metadata.collections[taxonomyName][taxonomyValue] || []
+            metadata.collections[taxonomyName][taxonomyValue]["sortingName"] = sortingName
             metadata.collections[taxonomyName][taxonomyValue].push(collectionElem)
         })
     })
@@ -173,7 +207,7 @@ function createTaxonomyValuePages(taxonomyName, outputDir, layout) {
     return function(files, metalsmith, done){
         setImmediate(done)
         var metadata = metalsmith.metadata()
-        Object.keys(metadata.collections[taxonomyName]).forEach(function(taxonomyValue) {
+        Object.keys(metadata.collections[taxonomyName]).forEach(function(taxonomyValue) {          
             const path = contentDir + "/" + outputDir + "/" + slug(taxonomyValue, {mode: 'rfc3986'}) + ".md";
             var page = {
                 layout: layout,
@@ -182,6 +216,7 @@ function createTaxonomyValuePages(taxonomyName, outputDir, layout) {
                 taxonomyValue: taxonomyValue,
             }
             files[path] = page
+            // TODO is this really this complicated??
             var taxonomyValueData = metadata.collections[taxonomyName][taxonomyValue]
             taxonomyValueData["file"] = page
             metadata.collections[taxonomyName][taxonomyValue] = taxonomyValueData

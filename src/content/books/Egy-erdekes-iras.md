@@ -1,7 +1,7 @@
 ---
 title: Egy érdekes írás
 authors:
-  - Faragó Imre
+  - name: Faragó Imre
 ppeknum: 2013
 date: 2019-06-13 21:40:45
 downloadUrls:
