@@ -3,7 +3,7 @@ title: Trükkös regény
 authors:
   - name: V. Albert
     sortingName: Albert
-ppeknum: 2014
+ppeknum: 4
 date: 2019-06-13 21:44:00
 downloadUrls:
   doc: https://www.google.com

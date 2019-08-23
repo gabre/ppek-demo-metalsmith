@@ -1,4 +1,4 @@
 ---
-title: Elérhető könyvek
-layout: book-list.njk
+title: Elérhető könyvek a bekerülés sorrendjében
+layout: numbered-list.njk
 ---

@@ -2,7 +2,7 @@
 title: Különösen jó regény
 authors:
   - name: Wagner Ödön
-ppeknum: 2014
+ppeknum: 3
 date: 2019-06-13 21:44:00
 downloadUrls:
   doc: https://www.google.com

@@ -61,15 +61,18 @@ function sortAccented(arr, reversed, sortingAttr, prioritizedSortingAttr) {
                  b[prioritizedSortingAttr]
                : b[sortingAttr])
            : b);
-           
-    if (typeof(x) === 'string') {
-      x = deleteQuoteMarks(x.toLowerCase());
-      y = deleteQuoteMarks(y.toLowerCase());
+    if (typeof(x) === 'number') {
+      return x - y;
     } else {
-      x = x.sort(Intl.Collator('hu').compare).join("")
-      y = y.sort(Intl.Collator('hu').compare).join("")
-    }
-    return x.localeCompare(y, "hu") * (reversed ? -1 : 1)    
+      if (typeof(x) === 'string') {
+        x = deleteQuoteMarks(x.toLowerCase());
+        y = deleteQuoteMarks(y.toLowerCase());
+      } else {
+        x = x.sort(Intl.Collator('hu').compare).join("")
+        y = y.sort(Intl.Collator('hu').compare).join("")
+      }
+      return x.localeCompare(y, "hu") * (reversed ? -1 : 1)
+    };
   });
 
   return copiedArr;

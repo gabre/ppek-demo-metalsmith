@@ -3,7 +3,7 @@ title: Az első könyvem
 authors:
   - name: Kiss Tamás
   - name: Albert István
-ppeknum: 2019
+ppeknum: 1
 date: 2019-06-13 21:39:42
 downloadUrls:
   pdf: https://www.google.com

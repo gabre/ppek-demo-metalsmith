@@ -8,13 +8,15 @@
     <table class="pure-table">
       <thead>
           <tr>
+              <th>Sorszám</th>
               <th>Szerző</th>
               <th>Cím</th>
           </tr>
       </thead>
       <tbody>
-        {% for book in collections.books | sortAccented(false, 'authors') %}
+        {% for book in collections.books | sortAccented(false, 'ppeknum') %}
           <tr>
+            <td>{{book.ppeknum}}.</td>
             <td>
               {% for author in book.authors %}
                 {{author.name}}{{"," if not loop.last }}
