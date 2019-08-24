@@ -1,11 +1,11 @@
 {% extends "main-parent.njk" %}
 {% block pageMain %}
   <div class="content">
-    <h2 id="the-foundation" class="content-subhead ul-centered">
+    <h2 id="the-foundation" class="content-subhead ul-custom">
       {{ title }}
     </h2>
     <div class="table-responsive">
-      <ul class="ul-centered">
+      <ul class="ul-custom">
         {% for author, authordata in collections.authors | dictsortAccented("attribute", "sortingName") %} 
           <li class="with-some-padding">
             <a class="font-bigger" href="{{rootRelativePath}}/{{authordata.file.ownRelativePathFromRoot}}">{{author}}</a>

@@ -39,9 +39,7 @@
     }
 }
 
-/* Centered list items --- */
-.ul-centered {
-    text-align: center;
+.ul-custom {
     list-style-type: none;
     padding-inline-start: 0px;
 }
