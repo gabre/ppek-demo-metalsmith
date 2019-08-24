@@ -48,8 +48,11 @@ function deleteNonAlphanum(s) {
 // It can sort by an attribute
 // It can look for another attribute that takes priority if exists
 function sortAccented(arr, reversed, sortingAttr, prioritizedSortingAttr) {
-  let copiedArr = [...arr];
+  if (arr === null) {
+    throw new Error("sortAccented: array to be sorted is null.");
+  }
 
+  let copiedArr = [...arr];
   copiedArr.sort((a, b) => {
     let x = ((sortingAttr) ?
                ((prioritizedSortingAttr && a[prioritizedSortingAttr]) ?
@@ -269,13 +272,14 @@ Metalsmith(__dirname)         // __dirname defined by node.js:
   .use(collections({
     books: contentDir + '/' + booksOutDir + '/*.md'
   }))
+  // -- NOTE: keyword are unused at the moment.
   // Sort collection's taxonomies
   .use(transformCollections(sortCollectionTaxonomies, {
-    books: ["authors"]
+    books: ["authors", "keywords"]
   }))
   // Create their own collections for taxonomies
   .use(transformCollections(createTaxonomyCollections, {
-    books: ["authors"]
+    books: ["authors", "keywords"]
   }))
   // Create taxonomy value list pages
   .use(createTaxonomyValuePages("authors", authorsOutDir, "author-book-list.njk"))

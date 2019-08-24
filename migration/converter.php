@@ -60,6 +60,7 @@
         fwrite($fp, 'authors:' . "\n");
         fwrite($fp, '  - ' . quote($author) . "\n");
         fwrite($fp, 'ppeknum: ' . $idnum . "\n");
+        fwrite($fp, "keywords: []\n");
         fwrite($fp, 'downloadUrls: ' . "\n");
         foreach ($urlTable as $key => $value) {
             fwrite($fp, '  ' . quote($key) . ": " . $value . "\n");
