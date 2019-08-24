@@ -1,5 +1,5 @@
 ---
-title: Katolikus Elektronikus Könyvtár
+title: Isten hozta a könyvtárban!
 layout: index.njk
 ---
 A Könyvtár önkéntesek munkájával mindenki számára elektronikus formában terjeszti Isten Igéjét.

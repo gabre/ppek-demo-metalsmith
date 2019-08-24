@@ -4,6 +4,13 @@
     <h2 id="the-foundation" class="content-subhead">
       {{ title }}
     </h2>
-    {{ contents | safe }}
+    <div class = "pure-g">
+      <div class = "pure-u-3-4 pure-u-lg-7-8">
+        {{ contents | safe }}
+      </div>
+      <div class = "pure-u-1-4 pure-u-lg-1-8">  
+        <img class = "pure-img" src = "{{ rootRelativePath }}/images/pazmany.gif" alt="html5" style="padding-left: 1em; padding-top: 1em;">  
+      </div>
+    </div>
   </div>
 {% endblock pageMain %}
