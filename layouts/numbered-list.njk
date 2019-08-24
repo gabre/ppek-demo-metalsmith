@@ -8,7 +8,7 @@
     <table class="pure-table">
       <thead>
           <tr>
-              <th>Sorszám</th>
+              <th>PPEK szám</th>
               <th>Szerző</th>
               <th>Cím</th>
           </tr>
@@ -19,7 +19,7 @@
             <td>{{book.ppeknum}}.</td>
             <td>
               {% for author in book.authors %}
-                {{author.name}}{{"," if not loop.last }}
+                <a href="{{rootRelativePath}}/{{collections.authors[author.name].file.ownRelativePathFromRoot}}">{{author.name}}</a>{{"," if not loop.last }}
               {% endfor %}
             </td>
             <td><a href="{{rootRelativePath}}/{{book.ownRelativePathFromRoot}}">{{ book.title }}</a></td>

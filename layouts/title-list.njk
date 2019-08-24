@@ -8,7 +8,10 @@
       <ul class="ul-custom">
         {% for book in collections.books | sortAccented(false, 'title', 'sorting-title') %}
           <li class="with-some-padding">
-            <a class="font-bigger" href="{{rootRelativePath}}/{{book.ownRelativePathFromRoot}}">{{ book.title }}</a>
+            <a class="font-bigger" href="{{rootRelativePath}}/{{book.ownRelativePathFromRoot}}">{{ book.title }}</a>;&nbsp
+            {% for author in book.authors %}
+              <a href="{{rootRelativePath}}/{{collections.authors[author.name].file.ownRelativePathFromRoot}}">{{author.name}}</a>{{"," if not loop.last }}
+            {% endfor %}
           </li>
         {% endfor %}
       </ul>
