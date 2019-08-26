@@ -1,0 +1,23 @@
+{% extends "main-parent.njk" %}
+{% block pageMain %}
+  <div class="content">
+    <h2 id="the-foundation" class="content-subhead">
+      {{ title }}
+    </h2>
+    <div class="table-responsive">
+    <table class="pure-table">
+      <thead>
+          <tr>
+              <th>PPEK szám</th>
+              <th>Szerző</th>
+              <th>Cím</th>
+          </tr>
+      </thead>
+      <tbody>
+        {% block tableBody %}
+        {% endblock tableBody %}
+      </tbody>
+    </table>
+    </div>
+  </div>
+{% endblock pageMain %}

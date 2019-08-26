@@ -1,6 +1,6 @@
 {% extends "book-table.njk" %}
 {% block tableBody %}
-{% for book in collections.books | sortAccented(false, 'ppeknum') %}
+{% for book in collections.books | filterAttrHasValue("type", "facsimile") | sortAccented(false, 'ppeknum') %}
   <tr>
     <td>{{book.ppeknum}}.</td>
     <td>

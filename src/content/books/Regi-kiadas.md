@@ -1,12 +1,11 @@
 ---
-title: Trükkös regény
+title: Régi kiadás
 authors:
-  - name: V. Albert
-    sortingName: Albert
-ppeknum: 4
+  - name: Savanyú Péter
+ppeknum: 5
 date: 2019-06-13 21:44:00
 keywords: []
-type: book
+type: facsimile
 downloadUrls:
   doc: https://www.google.com
 ---

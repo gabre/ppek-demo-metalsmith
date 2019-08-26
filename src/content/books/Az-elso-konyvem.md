@@ -6,6 +6,7 @@ authors:
 ppeknum: 1
 date: 2019-06-13 21:39:42
 keywords: []
+type: book
 downloadUrls:
   pdf: https://www.google.com
   txt: https://www.google.com

@@ -12,12 +12,13 @@ const marked    = require("marked");
 
 // --------------------------------------------------------------------------------
 
-const contentDir    = "content"
-const booksInDir    = "books"
-const booksOutDir   = "konyvek"
-const authorsOutDir = "szerzok"
-const titlesOutDir  = "cimek"
-const aboutOutDir   = "informaciok"
+const contentDir      = "content"
+const booksInDir      = "books"
+const booksOutDir     = "konyvek"
+const facsimileOutDir = "facsimile"
+const authorsOutDir   = "szerzok"
+const titlesOutDir    = "cimek"
+const aboutOutDir     = "informaciok"
 
 // --------------------------------------------------------------------------------
 
@@ -120,9 +121,16 @@ function dictsortAccented(val, by, attribute) {
   return newArray;
 }
 
+// Filter elements of the list that have an attribute with a specific value
+function filterAttrHasValue(list, attr, value) {
+  return list.filter(i => i[attr] === value);
+};
+
 // Nunjucks options
 const nunjucksRendererOptions = {
-  filters: { sortAccented: sortAccented, dictsortAccented: dictsortAccented }
+  filters: { sortAccented: sortAccented,
+             dictsortAccented: dictsortAccented,
+             filterAttrHasValue: filterAttrHasValue }
 };
 
 // --------------------------------------------------------------------------------
@@ -249,6 +257,7 @@ Metalsmith(__dirname)         // __dirname defined by node.js:
     generatorurl: "http://metalsmith.io/",
 
     booksOutDir: booksOutDir,
+    facsimileOutDir: facsimileOutDir,
     authorsOutDir: authorsOutDir,
     titlesOutDir: titlesOutDir,
     aboutOutDir: aboutOutDir

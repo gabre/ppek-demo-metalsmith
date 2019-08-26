@@ -5,6 +5,7 @@ authors:
 ppeknum: 2
 date: 2019-06-13 21:40:45
 keywords: []
+type: book
 downloadUrls:
   pdf: https://www.google.com
   doc: https://www.google.com
