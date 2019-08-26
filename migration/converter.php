@@ -5,6 +5,27 @@
     $siteUrl = "http://ppek.hu/";
     $outdir = "converter-out";
     // --------------------------------------------------------
+    // Parse facsimile books
+
+    $content = file_get_contents($siteUrl . 'ppekfacs.htm');
+
+    $dom = new DOMDocument('1.0', 'UTF-8');
+    $dom->loadHTML('<?xml encoding="utf-8"?>' . $content);
+
+    $xpath = new DOMXpath($dom);
+    $elements = $xpath->query("//tr//td//a[text()]");
+
+    $facsimileBooks = array();
+
+    foreach ($elements as $key => $value) {
+        $someFacsimileLink = $value->getAttributeNode("href")->value;
+        preg_match('/\.*k([0-9]*)\.htm/', $someFacsimileLink, $result);
+        if (sizeof($result) > 1) {
+            $facsimileBooks[$result[1]] = null;
+        }
+    }
+
+    // --------------------------------------------------------
 
     $content = file_get_contents($siteUrl . 'ppekcim.htm');
 
@@ -37,8 +58,15 @@
             $title = to_bare_text($twaArr[0]);
             $author = "Ismeretlen";
         }
-        $fullidnum = getElemText($bookPage, "/html/body/table[1]/tbody/tr/td[3]/b");
+
+        // In Chrome, this is: /html/body/table[1]/tbody/tr/td[3]/b
+        $fullidnum = getElemText($bookPage, "/html/body/table[1]/tr/td[3]/b");
         $idnum = trim(explode(":", $fullidnum)[1]);
+
+        $type = "book";
+        if (array_key_exists($idnum, $facsimileBooks)) {
+            $type = "facsimile";
+        }
 
         $bodyText = getElemText($bookPage, "/html/body");
         $description = get_description(to_bare_text(($bodyText)));
@@ -60,6 +88,7 @@
         fwrite($fp, 'authors:' . "\n");
         fwrite($fp, '  - ' . quote($author) . "\n");
         fwrite($fp, 'ppeknum: ' . $idnum . "\n");
+        fwrite($fp, 'type: ' . $type . "\n");
         fwrite($fp, "keywords: []\n");
         fwrite($fp, 'downloadUrls: ' . "\n");
         foreach ($urlTable as $key => $value) {
