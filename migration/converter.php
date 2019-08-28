@@ -19,9 +19,9 @@
 
     foreach ($elements as $key => $value) {
         $someFacsimileLink = $value->getAttributeNode("href")->value;
-        preg_match('/\.*k([0-9]*)\.htm/', $someFacsimileLink, $result);
-        if (sizeof($result) > 1) {
-            $facsimileBooks[$result[1]] = null;
+        $result = get_id_from_booklink($someFacsimileLink);
+        if ($result != null) {
+            $facsimileBooks[$result] = null;
         }
     }
 
@@ -68,8 +68,7 @@
             $type = "facsimile";
         }
 
-        $bodyText = getElemText($bookPage, "/html/body");
-        $description = get_description(to_bare_text(($bodyText)));
+        $description = to_bare_text(get_description($bookPage));
         $urlTable = getLinks($siteUrl, $bookPage);
 
         // -----------------------------------
@@ -123,9 +122,34 @@
         return trim($x->item($which)->textContent);
     }
 
-    function get_description($bodyText) {
-        preg_match_all('/.*PPEK szám: [0-9]+ (.*?)Kattintson/', $bodyText, $output_array);
-        return $output_array[1][0];
+    function get_description($bookPage) {
+        $x = (new DOMXPath($bookPage))->query("/html/body");
+        $bodyNodeList = $x[0]->childNodes;
+        $description = "";
+        $horiLinePassed = FALSE;
+        $beforeSmallDownloadText = TRUE;
+        foreach ($bodyNodeList as $i => $item) {
+            if ($item->tagName == "small") {
+                $beforeSmallDownloadText = FALSE;
+            }
+            if ($horiLinePassed and $beforeSmallDownloadText) {
+                if ($item->tagName == "a") {
+                    $href = $item->attributes["href"]->textContent;
+                    $someid = get_id_from_booklink($href);
+                    if ($someid != null) {
+                        $href = "link-book-" . $someid;
+                    }
+                    $linkItem = '[' . $item->textContent . '](' . $href . ')';
+                    $description = $description . $linkItem;
+                } else {
+                    $description = $description . $item->textContent;
+                }
+            }
+            if ($item->tagName == "hr") {
+                $horiLinePassed = TRUE;
+            }
+        }
+        return $description;
     }
 
     function to_bare_text($string) {
@@ -147,6 +171,15 @@
 
     function quote($string) {
         return "'" . preg_replace('/\'/', '\'\'', $string) . "'";
+    }
+
+    function get_id_from_booklink($link) {
+        preg_match('/\.*k([0-9]*)\.htm/', $link, $result);
+        if (sizeof($result) > 1) {
+            return $result[1];
+        } else {
+            return null;
+        }
     }
 
     // This is an older WordPress implementation
