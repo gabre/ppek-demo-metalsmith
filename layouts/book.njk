@@ -13,7 +13,7 @@
     </h3>
     </div>
     <div id="book-content">
-      {{ contents | safe }}
+      {{ contents | replaceVariables({ 'collections': collections, 'rootRelativePath': rootRelativePath }) | safe }}
     </div>
     <div id="book-links">
       <hr>

@@ -7,6 +7,8 @@ var debuglog    = require('metalsmith-debug');
 var copy        = require('metalsmith-copy');
 var debug       = require('debug')('metalsmith-PPEK-MAIN');
 
+var nunjucks    = require('jstransformer')(require('jstransformer-nunjucks'))
+
 var slug        = require('slug');
 const marked    = require("marked");
 
@@ -37,6 +39,17 @@ const pureCssMarkdownRenderer = () => {
     renderer.blockquote = function(quote) {
         return '<blockquote class="content-quote">\n' + quote + '</blockquote>\n';
         };
+
+    // Links that are not real URLs but e.g. link-book-91 are replaced by a link pointing (after Nunjucks variable
+    // substitution) to the corresponding book's page
+    renderer.link = function(href, title, text) {
+      parts = href.split("link-book-");
+      if (parts.length === 2 && parts[0] === '') {
+        return '<a href="{{rootRelativePath}}/{{ collections.booksById[' + parts[1] + '].ownRelativePathFromRoot }}">' + text + '</a>';
+      }
+      return marked.Renderer.prototype.link.call(this, href, title, text);
+    }
+
     return renderer;
 }
 
@@ -126,11 +139,19 @@ function filterAttrHasValue(list, attr, value) {
   return list.filter(i => i[attr] === value);
 };
 
+// Replace {{ nunjucks variables }} in a text using the given environment.
+function replaceVariables(text, env) {
+  debug(collections);
+  debug(text);
+  return nunjucks.render(text, {}, env).body;
+}
+
 // Nunjucks options
 const nunjucksRendererOptions = {
   filters: { sortAccented: sortAccented,
              dictsortAccented: dictsortAccented,
-             filterAttrHasValue: filterAttrHasValue }
+             filterAttrHasValue: filterAttrHasValue,
+             replaceVariables: replaceVariables }
 };
 
 // --------------------------------------------------------------------------------
@@ -179,6 +200,18 @@ function transformCollections(transform, opts) {
         })
         debug(metadata.collections)
     };
+}
+
+// Collect specific items by ID into 'itemByIdCollectionName'
+// The collection to process and the ID's name can be given as parameter of 'transformCollections'
+function collectItemById(itemByIdCollectionName) {
+    return function(metadata, collectionName, propertyName) {
+        metadata.collections[collectionName].forEach(function(collectionElem) {
+          uid = collectionElem[propertyName];
+          metadata.collections[itemByIdCollectionName] = metadata.collections[itemByIdCollectionName] || {};
+          metadata.collections[itemByIdCollectionName][uid] = collectionElem;
+        });
+    }
 }
 
 // Taxonomy = property of a collection element containing
@@ -292,6 +325,10 @@ Metalsmith(__dirname)         // __dirname defined by node.js:
   }))
   // Create taxonomy value list pages
   .use(createTaxonomyValuePages("authors", authorsOutDir, "author-book-list.njk"))
+  // Create an ID-to-book map (ID = ppeknum)
+  .use(transformCollections(collectItemById("booksById"), {
+    books: ["ppeknum"]
+  }))
   // Convert markdown to html
   .use(markdown({
     renderer: pureCssMarkdownRenderer()
@@ -308,7 +345,7 @@ Metalsmith(__dirname)         // __dirname defined by node.js:
     pattern: contentDir + "/**/*",
     engineOptions: nunjucksRendererOptions
   }))
-  // Remove uneeded top-level folders: static, content
+  // Remove uneeded top-level folders: static
   .use(copy({
     pattern: 'static/**/*',
     transform: function (file) {
@@ -316,6 +353,7 @@ Metalsmith(__dirname)         // __dirname defined by node.js:
       },
     move: true
   }))
+  // Remove uneeded top-level folders: content
   .use(copy({
     pattern: contentDir + '/**/*',
     transform: function (file) {
