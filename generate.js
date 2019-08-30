@@ -20,6 +20,7 @@ const booksOutDir     = "konyvek"
 const facsimileOutDir = "facsimile"
 const authorsOutDir   = "szerzok"
 const titlesOutDir    = "cimek"
+const batchOutDir     = "batyus"
 const aboutOutDir     = "informaciok"
 
 // --------------------------------------------------------------------------------
@@ -293,6 +294,7 @@ Metalsmith(__dirname)         // __dirname defined by node.js:
     facsimileOutDir: facsimileOutDir,
     authorsOutDir: authorsOutDir,
     titlesOutDir: titlesOutDir,
+    batchOutDir: batchOutDir,
     aboutOutDir: aboutOutDir
   })
   .source('./src')
@@ -306,6 +308,7 @@ Metalsmith(__dirname)         // __dirname defined by node.js:
         return file.replace(booksInDir, booksOutDir)
                    .replace("authors", authorsOutDir)
                    .replace("titles", titlesOutDir)
+                   .replace("batch", batchOutDir)
                    .replace("about", aboutOutDir)
     },
     move: true

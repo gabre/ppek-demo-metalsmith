@@ -1,6 +1,6 @@
 ---
 title: Információk könyvtárunkról
-layout: index.njk
+layout: index2.njk
 ---
 Célkitűzés 
 A Pázmány Péter Elektronikus Könyvtár (PPEK) célja az, hogy mindenki számára hozzáférhetővé tegye a teljes magyarnyelvű katolikus egyházi, lelki irodalmat elektronikus formában. A lelkipásztori munka támogatása mellett elősegíti az egyházi kutatómunkát és könyvnyomtatást és az írott, magyar keresztény értékek bemutatását, megőrzését, terjesztését. A könyvállomány mindenki számára ingyenesen rendelkezésre áll az internet hálózaton keresztül. 
