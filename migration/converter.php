@@ -85,7 +85,7 @@
         fwrite($fp, '---' . "\n");
         fwrite($fp, 'title: ' . quote($title) . "\n");
         fwrite($fp, 'authors:' . "\n");
-        fwrite($fp, '  - ' . quote($author) . "\n");
+        fwrite($fp, '  - name: ' . quote($author) . "\n");
         fwrite($fp, 'ppeknum: ' . $idnum . "\n");
         fwrite($fp, 'type: ' . $type . "\n");
         fwrite($fp, "keywords: []\n");
